@@ -5,6 +5,10 @@ from os import getpid
 user_counter = 0
 
 
+def send_load_balancer_request(proxy):
+    return proxy.round_robin()
+
+
 def calc_req_recv_timestamp(recv_timestamp, counter):
     return max(recv_timestamp, counter)+1
 
@@ -46,13 +50,13 @@ def send_viewBorrowedBooks_request(proxy, pid):
 
 
 def send_borrowBook_request(proxy, pid):
-    response = proxy.requestCS(pid)
+    # response = proxy.requestCS(pid)
 
-    if response != "OK":
-        print("\nWaiting...\n")
-        while response != "OK":
-            sleep(10)
-            response = proxy.requestCS(pid)
+    # if response != "OK":
+    #     print("\nWaiting...\n")
+    #     while response != "OK":
+    #         sleep(10)
+    #         response = proxy.requestCS(pid)
 
     global user_counter
     user_counter += 1
@@ -75,7 +79,7 @@ def send_borrowBook_request(proxy, pid):
     else:
         print("Failed to borrow book")
 
-    proxy.releaseCS(pid)
+    # proxy.releaseCS(pid)
 
 
 def send_returnBook_request(proxy, pid):
@@ -97,7 +101,12 @@ def send_returnBook_request(proxy, pid):
 def main():
 
     # Define a proxy to use it to invoke the function
-    proxy = xmlrpc.client.ServerProxy("http://localhost:8000/")
+    load_balancer = xmlrpc.client.ServerProxy("http://localhost:9000/")
+    proxy = []
+    proxy.append(xmlrpc.client.ServerProxy("http://localhost:8000/"))
+    proxy.append(xmlrpc.client.ServerProxy("http://localhost:8001/"))
+    proxy.append(xmlrpc.client.ServerProxy("http://localhost:8002/"))
+    proxy.append(xmlrpc.client.ServerProxy("http://localhost:8003/"))
 
     pid = getpid()
     choice = 0
@@ -114,16 +123,24 @@ def main():
         choice = int(input("\nEnter your choice: "))
 
         if choice == 1:
-            send_borrowBook_request(proxy, pid)
+            index = send_load_balancer_request(load_balancer)
+            print("Sending request to Sever with port number:", (8000+index))
+            send_borrowBook_request(proxy[index], pid)
 
         elif choice == 2:
-            send_returnBook_request(proxy, pid)
+            index = send_load_balancer_request(load_balancer)
+            print("Sending request to Sever with port number:", (8000+index))
+            send_returnBook_request(proxy[index], pid)
 
         elif choice == 3:
-            send_viewBooks_request(proxy, pid)
+            index = send_load_balancer_request(load_balancer)
+            print("Sending request to Sever with port number:", (8000+index))
+            send_viewBooks_request(proxy[index], pid)
 
         elif choice == 4:
-            send_viewBorrowedBooks_request(proxy, pid)
+            index = send_load_balancer_request(load_balancer)
+            print("Sending request to Sever with port number:", (8000+index))
+            send_viewBorrowedBooks_request(proxy[index], pid)
 
         elif choice == 5:
             break

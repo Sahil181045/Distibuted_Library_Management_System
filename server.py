@@ -1,14 +1,14 @@
 from xmlrpc.server import SimpleXMLRPCServer
 import pymongo
 
-myclient = pymongo.MongoClient("mongodb://localhost:27017/")
+PORT = 8000
 
+myclient = pymongo.MongoClient("mongodb://localhost:27017/")
 dlms = myclient["dlms"]
 books = dlms["bookData"]
 borrowedBooks = dlms["borrowedBooks"]
 
 server_counter = 0
-
 request_queue = []
 cur_critical_section_proc = None
 
@@ -153,10 +153,10 @@ def returnBook(returnTitle, pid, timestamp):
 
 
 def main():
+    global PORT
 
     # Define local XML RPC server
-    server = SimpleXMLRPCServer(
-        ("localhost", 8000), logRequests=False, allow_none=True)
+    server = SimpleXMLRPCServer(("localhost", PORT), allow_none=True)
 
     # Registering the function to the server
     server.register_function(addBook)
@@ -169,7 +169,7 @@ def main():
     server.register_function(releaseCS)
 
     try:
-        print("Listening on port 8000...")
+        print(f"Listening on port {PORT}...")
         print("Press Ctrl + C to exit.")
         server.serve_forever()
 
