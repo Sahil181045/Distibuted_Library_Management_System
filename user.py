@@ -1,4 +1,3 @@
-from time import sleep
 import xmlrpc.client
 from os import getpid
 

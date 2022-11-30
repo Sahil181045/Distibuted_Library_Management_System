@@ -1,0 +1,22 @@
+[{
+  "_id": {
+    "$oid": "633339ccf8e2a2b72b64e315"
+  },
+  "title": "Bleak House",
+  "author": "Dickens, Charles",
+  "quantity": 14
+},{
+  "_id": {
+    "$oid": "6333de61ef5e1594ca125cc8"
+  },
+  "title": "The Hours",
+  "author": "Cunningham, Michael",
+  "quantity": 17
+},{
+  "_id": {
+    "$oid": "63347ddc110c889c64bd5341"
+  },
+  "title": "Huckleberry Finns",
+  "author": "Twain, Mark",
+  "quantity": 16
+}]

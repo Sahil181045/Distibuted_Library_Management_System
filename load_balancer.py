@@ -1,5 +1,5 @@
 from xmlrpc.server import SimpleXMLRPCServer
-server_pool = [8000, 8001, 8002, 8003]
+server_pool = [8000, 8001]
 index = 0
 
 
